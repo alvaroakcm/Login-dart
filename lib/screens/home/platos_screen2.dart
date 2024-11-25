@@ -47,6 +47,15 @@ class PlatosScreen2 extends StatelessWidget {
                 title: Text(restaurantName),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context, '/carrito'); // Ruta de carrito
+                    },
+                  ),
+                ],
               ),
               Expanded(
                 child: Consumer2<PlatoProvider, RestaurantProvider>(

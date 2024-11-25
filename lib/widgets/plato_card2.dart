@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../models/CartItem.dart';
 import '../models/plato.dart';
+import '../providers/CartProvider.dart';
 
 class PlatoCard2 extends StatelessWidget {
   final Plato plato;
@@ -30,9 +33,8 @@ class PlatoCard2 extends StatelessWidget {
                 height: 80,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  // En caso de error de carga de imagen
                   return Image.asset(
-                    'assets/placeholder.png', // Asegúrate de tener un archivo de imagen placeholder en assets
+                    'assets/placeholder.png',
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
@@ -78,7 +80,24 @@ class PlatoCard2 extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.add_circle_outline, color: Colors.teal),
               onPressed: () {
-                // Acción para añadir plato
+                final cartProvider =
+                    Provider.of<CartProvider>(context, listen: false);
+
+                cartProvider.addToCart(CartItem(
+                  platoid: plato
+                      .platoid, // Cambia por el atributo ID de tu modelo Plato
+                  platoName: plato.platoName,
+                  precio: plato.precio,
+                  imagenUrl: plato.imagenUrl,
+                  cantidad: 1,
+                ));
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${plato.platoName} agregado al carrito'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
               },
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'providers/CartProvider.dart';
 import 'providers/plato_provider.dart';
 import 'providers/restaurant_provider.dart';
 import 'providers/usuario_provider.dart';
@@ -9,6 +10,7 @@ import 'screens/auth/login_screen.dart';
 import 'screens/auth/registro_cliente_screen.dart';
 import 'screens/auth/registro_empresa_screen.dart';
 import 'screens/auth/tipo_usuario_screen.dart';
+import 'screens/home/Carrito_screen.dart';
 import 'screens/home/home-screen2.dart';
 import 'screens/home/home_screen.dart';
 import 'service/restaurant_service.dart';
@@ -26,6 +28,7 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => PlatoProvider(),
         ),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(
           create: (_) => UserProvider(), // Agrega el UserProvider aquí
         ),
@@ -55,6 +58,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const TipoUsuarioScreen(),
         '/register-client': (context) => RegistroClienteScreen(),
         '/register-company': (context) => RegistroEmpresaScreen(),
+        '/carrito': (context) => const CartScreen(),
         '/home2': (context) {
           final userId =
               Provider.of<UserProvider>(context, listen: false).userId;
