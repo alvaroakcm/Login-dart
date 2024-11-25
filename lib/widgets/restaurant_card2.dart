@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../models/restaurant.dart';
-import '../screens/home/Editar_restaurantes_screen.dart';
 
-class RestaurantCard extends StatelessWidget {
+class RestaurantCard2 extends StatelessWidget {
   final Restaurante restaurant;
   final VoidCallback onTap;
-  final VoidCallback onDelete;
 
-  const RestaurantCard({
+  const RestaurantCard2({
     super.key,
     required this.restaurant,
     required this.onTap,
-    required this.onDelete,
   });
 
   @override
@@ -89,27 +86,42 @@ class RestaurantCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              // Botones juntos al lado derecho
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Botón de editar
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditarRestauranteScreen(
-                            restaurante: restaurant,
-                          ),
-                        ),
-                      );
-                    },
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.favorite_border),
+                        onPressed: () {
+                          // Funcionalidad de favorito
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.chat_bubble_outline),
+                        onPressed: () {
+                          // Funcionalidad de chat
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.share),
+                        onPressed: () {
+                          // Funcionalidad de compartir
+                        },
+                      ),
+                    ],
                   ),
-                  // Botón de eliminar
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: onDelete,
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.teal),
+                      const SizedBox(width: 4),
+                      Text(
+                        restaurant.rating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -1,3 +1,4 @@
+// services/api_service.dart
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -6,76 +7,84 @@ import '../models/restaurant.dart';
 
 class RestaurantService {
   final String baseUrl =
-      "http://localhost:8873/api/restaurante"; // Cambia esto si es necesario
+      "http://192.168.56.1:8873/api/restaurante"; // Cambia esto por la URL de tu backend
 
-  // Método para obtener todos los restaurantes
-  Future<List<Restaurant>> getAllRestaurants() async {
-    final response = await http.get(Uri.parse('$baseUrl/all'));
+  Future<List<Restaurante>> getRestaurantesByUsuarioId(int userId) async {
+    final url = Uri.parse('$baseUrl/usuarios/$userId'); // Endpoint específico
 
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => Restaurante.fromJson(json)).toList();
+      } else {
+        throw Exception('Error al cargar restaurantes: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  Future<List<Restaurante>> getAllRestaurantes() async {
+    final response = await http.get(Uri.parse("$baseUrl/all"));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Restaurant.fromJson(json)).toList();
+      return data.map((json) => Restaurante.fromJson(json)).toList();
     } else {
-      throw Exception('Error al obtener los restaurantes');
+      throw Exception("Error al cargar los restaurantes");
     }
   }
 
-  // Método para obtener un restaurante por ID
-  Future<Restaurant> getRestaurantById(int id) async {
-    final response = await http.get(Uri.parse('$baseUrl/$id'));
-
+  Future<Restaurante> getRestauranteById(int id) async {
+    final response = await http.get(Uri.parse("$baseUrl/$id"));
     if (response.statusCode == 200) {
-      return Restaurant.fromJson(json.decode(response.body));
+      return Restaurante.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Restaurante no encontrado');
+      throw Exception("Restaurante no encontrado");
     }
   }
 
-  // Método para obtener restaurantes por nombre
-  Future<List<Restaurant>> getRestaurantsByName(String nombre) async {
-    final response = await http.get(Uri.parse('$baseUrl/nombre/$nombre'));
+  Future<Restaurante?> editarRestaurante(
+      int id, Restaurante restaurante) async {
+    final url = Uri.parse('$baseUrl/editar/$id');
 
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Restaurant.fromJson(json)).toList();
-    } else {
-      throw Exception('Error al buscar restaurantes por nombre');
+    try {
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(restaurante.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        return Restaurante.fromJson(jsonDecode(response.body));
+      } else {
+        print(
+            'Error al editar el restaurante: ${response.statusCode}, ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión al editar el restaurante: $e');
+      return null;
     }
   }
 
-  // Método para obtener restaurantes por categoría
-  Future<List<Restaurant>> getRestaurantsByCategory(String categoria) async {
-    final response = await http.get(Uri.parse('$baseUrl/categoria/$categoria'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Restaurant.fromJson(json)).toList();
-    } else {
-      throw Exception('Error al buscar restaurantes por categoría');
-    }
-  }
-
-  // Método para crear un nuevo restaurante
-  Future<Restaurant> createRestaurant(Restaurant restaurant) async {
+  Future<void> createRestaurante(Restaurante restaurante) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/create/restaurante'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(restaurant.toJson()),
+      Uri.parse("$baseUrl/create/restaurante"),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(restaurante.toJson()),
     );
-
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      return Restaurant.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Error al crear el restaurante');
+    if (response.statusCode != 201) {
+      throw Exception("Error al crear restaurante");
     }
   }
 
-  // Método para eliminar un restaurante por ID
-  Future<void> deleteRestaurant(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id'));
-
+  Future<void> eliminarRestaurante(int id) async {
+    final url = Uri.parse('$baseUrl/eliminar/$id');
+    final response = await http.delete(url);
     if (response.statusCode != 200) {
-      throw Exception('Error al eliminar el restaurante');
+      throw Exception("Error al eliminar el restaurante");
     }
   }
 }

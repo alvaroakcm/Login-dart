@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/app_logo.dart';
 import '../../widgets/custom_button.dart';
-import 'login_screen.dart';
 
 class TipoUsuarioScreen extends StatelessWidget {
   const TipoUsuarioScreen({super.key});
@@ -12,10 +11,26 @@ class TipoUsuarioScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo con curvas
-          Positioned.fill(
-            child: CustomPaint(
-              painter: CurvedBackgroundPainter(),
+          // Fondo curvado superior
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/curved_background.png', // Ruta del fondo superior
+              fit: BoxFit.cover,
+              height: MediaQuery.of(context).size.height * 0.15,
+            ),
+          ),
+          // Fondo curvado inferior
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/curved_inferior.png', // Ruta del fondo inferior
+              fit: BoxFit.cover,
+              height: MediaQuery.of(context).size.height * 0.15,
             ),
           ),
           // Contenido de la pantalla

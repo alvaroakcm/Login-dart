@@ -3,27 +3,25 @@ import 'package:provider/provider.dart';
 
 import '../../providers/restaurant_provider.dart';
 import '../../theme/app_colors.dart';
-import '../../widgets/restaurant_card.dart';
-import 'add_restaurant_screen.dart';
-import 'platos_screen.dart';
+import '../../widgets/restaurant_card2.dart';
+import 'platos_screen2.dart';
 
-class HomeScreen extends StatefulWidget {
-  final int userId; // Nuevo parámetro para recibir el usuarioId
+class HomeScreen2 extends StatefulWidget {
+  final int userId;
 
-  const HomeScreen({super.key, required this.userId});
+  const HomeScreen2({super.key, required this.userId});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeScreen2State createState() => _HomeScreen2State();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreen2State extends State<HomeScreen2> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      Provider.of<RestaurantProvider>(context, listen: false)
-          .fetchRestaurantsByUsuario(widget.userId); // Usar usuarioId
-    });
+    Future.microtask(() =>
+        Provider.of<RestaurantProvider>(context, listen: false)
+            .fetchAllRestaurants());
   }
 
   @override
@@ -56,10 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Text(
                   "Categorías",
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87),
                 ),
                 const SizedBox(height: 10),
                 _buildCategoriesRow(restaurantProvider),
@@ -67,10 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Text(
                   "Restaurantes",
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87),
                 ),
                 const SizedBox(height: 10),
                 Expanded(
@@ -81,24 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemBuilder: (context, index) {
                             final restaurant =
                                 restaurantProvider.restaurantes[index];
-                            return RestaurantCard(
+                            return RestaurantCard2(
                               restaurant: restaurant,
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => PlatosScreen(
+                                    builder: (context) => PlatosScreen2(
                                       restauranteId: restaurant.restauranteId,
-                                      restauranteNombre:
-                                          restaurant.restaurantName,
+                                      restaurantName: restaurant.restaurantName,
                                     ),
                                   ),
                                 );
-                              },
-                              onDelete: () {
-                                // Eliminar restaurante usando el proveedor
-                                restaurantProvider.eliminarRestaurante(
-                                    restaurant.restauranteId);
                               },
                             );
                           },
@@ -108,17 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddRestaurantScreen(userId: widget.userId),
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -163,7 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
       "Pescados y mariscos",
       "Vegetarianos",
       "Chifas",
-      "Pizzerias"
     ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

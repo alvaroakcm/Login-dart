@@ -8,27 +8,74 @@ class SendCodeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Código de Recuperación Enviado'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'El código de recuperación ha sido enviado a $email. Por favor revisa tu correo electrónico.',
-              textAlign: TextAlign.center,
+      body: Stack(
+        children: [
+          // Fondo curvado
+          Positioned.fill(
+            child: Image.asset(
+              'assets/curved_background.png',
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Volver a la pantalla anterior
-              },
-              child: const Text('Volver al inicio de sesión'),
+          ),
+          // Contenido principal
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Icono o ilustración
+                  const Icon(
+                    Icons.email,
+                    size: 100,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 20),
+                  // Mensaje de confirmación
+                  const Text(
+                    '¡Código Enviado!',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'El código de recuperación ha sido enviado a:\n$email',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Botón
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.teal,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pop(); // Volver a la pantalla anterior
+                    },
+                    child: const Text(
+                      'Volver al inicio de sesión',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

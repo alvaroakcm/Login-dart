@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+// Importar el provider de usuario
+import '../../providers/usuario_provider.dart';
 import '../../theme/app_colors.dart'; // Importar los colores
 import '../../widgets/app_logo.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../home/home-screen2.dart';
+import '../home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String _errorMessage = ''; // Para mostrar mensajes de error
 
   // Simulación de login
-  void _login() {
+  void _login() async {
     setState(() {
       _errorMessage = ''; // Limpiar el mensaje de error antes de validar
     });
@@ -31,10 +36,33 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Validación simulada de credenciales (puedes reemplazarla con lógica real más adelante)
-    if (_userController.text == 'admin' && _passwordController.text == '1234') {
-      Navigator.pushReplacementNamed(
-          context, '/home'); // Navegar a la pantalla principal (home)
+    // Llamar al método de login del provider de usuario
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final loginSuccess = await userProvider.login(
+      _userController.text,
+      _passwordController.text,
+      context,
+    );
+
+    if (loginSuccess) {
+      // Obtener el usuarioId desde el provider
+      final userId = userProvider.userId;
+      // Redirigir al tipo de pantalla correspondiente según el tipo de usuario
+      if (userProvider.tipoUsuario == 'administrador') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(userId: userId),
+          ),
+        );
+      } else if (userProvider.tipoUsuario == 'cliente') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen2(userId: userId),
+          ),
+        );
+      }
     } else {
       setState(() {
         _errorMessage = 'Usuario o contraseña incorrectos';
@@ -47,10 +75,26 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo con curvas
-          Positioned.fill(
-            child: CustomPaint(
-              painter: CurvedBackgroundPainter(),
+          // Fondo curvado superior
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/curved_background.png', // Ruta de la imagen superior
+              fit: BoxFit.cover,
+              height: MediaQuery.of(context).size.height * 0.15,
+            ),
+          ),
+          // Fondo curvado inferior
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/curved_inferior.png', // Ruta de la imagen inferior
+              fit: BoxFit.cover,
+              height: MediaQuery.of(context).size.height * 0.15,
             ),
           ),
           // Contenido de la pantalla
@@ -145,47 +189,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-}
-
-class CurvedBackgroundPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.primaryColor // Color definido
-      ..style = PaintingStyle.fill;
-
-    // Ajustar la Curva Superior
-    final pathTop = Path()
-      ..moveTo(
-          0,
-          size.height *
-              0.0) // Inicio de la curva en la parte superior izquierda
-      ..lineTo(0,
-          size.height * 0.15) // Línea vertical corta para darle altura inicial
-      ..quadraticBezierTo(
-        size.width * 0.5,
-        size.height * 0.05, // Punto de control (más arriba que antes)
-        size.width, size.height * 0.15, // Punto final (más arriba que antes)
-      )
-      ..lineTo(size.width, 0)
-      ..close();
-    canvas.drawPath(pathTop, paint);
-
-    // Ajustar la Curva Inferior (sin cambios)
-    final pathBottom = Path()
-      ..moveTo(0, size.height * 0.8)
-      ..quadraticBezierTo(
-        size.width * 0.5,
-        size.height * 0.95,
-        size.width,
-        size.height * 0.8,
-      )
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    canvas.drawPath(pathBottom, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
